@@ -9,7 +9,7 @@ from eth_account import Account
 from eth_typing import Address
 from rich.console import Console as RichConsole
 
-# from eth_utils import function_signature_to_4byte_selector
+from eth_utils import function_signature_to_4byte_selector
 
 
 logger = RichConsole(file=sys.stdout)
@@ -70,17 +70,17 @@ pool_settings = {
             "osETH/rETH",  # name
             "oseth-reth",  # symbol
             [
-                "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0",  # wstETH as test, later osETH
+                "0xf1C9acDc66974dFB6dEcB12aA385b9cD01190E38",  # osETH
                 "0xae78736Cd615f374D3085123A210448E74Fc6393",  # rETH
             ],
-            100,  # A
+            500,  # A
             1000000,  # fee
             20000000000,  # offpeg_fee_multiplier
             865,  # ma_exp_time
             0,  # implementation index
             [1, 1],  # asset_types
-            [b"\x03\x5f\xaf\x82", b"\xe6\xaa\x21\x6c"],  # method_ids
-            ["0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0", "0xae78736Cd615f374D3085123A210448E74Fc6393"],  # oracles
+            [b"\x67\x9a\xef\xce", b"\xe6\xaa\x21\x6c"],  # method_ids
+            ["0x8023518b2192FB5384DAdc596765B3dD1cdFe471", "0xae78736Cd615f374D3085123A210448E74Fc6393"],  # oracles
         ],
     }
 }
@@ -95,10 +95,16 @@ Rate function: getExchangeRate() on token, method_id:  0xe6aa216c
 method_id = function_signature_to_4byte_selector('getExchangeRate()')
 
 
-wstETH
-0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0 
-https://etherscan.io/address/0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0#readContract
-Rate function: stEthPerToken() on token, method_id: 0x035faf82 
+osETH
+0xf1C9acDc66974dFB6dEcB12aA385b9cD01190E38 
+https://etherscan.io/address/0xf1C9acDc66974dFB6dEcB12aA385b9cD01190E38#readContract
+
+Rate for osETH
+0x8023518b2192FB5384DAdc596765B3dD1cdFe471
+https://etherscan.io/address/0x8023518b2192FB5384DAdc596765B3dD1cdFe471#readContract
+
+Rate function: getRate() on token, method_id:  0x679aefce, \x67\x9a\xef\xce
+
 '''
 
 
@@ -107,6 +113,8 @@ def deploy_pool(network, url, account, pool_type, fork):
     
     logger.log(f"Deploying pool on {network} ...")
 
+    method_id = function_signature_to_4byte_selector('getRate()')
+    print(method_id)
     if fork:
         boa.env.fork(url)
         logger.log("Forkmode ...")
